@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <title>dat_replace</title>
+</head>
+<style>
+
+body{
+background-color:#000003;
+color:#FCFCFC;
+font-size:17px;
+line-height: 1.6;
+font-family: "メイリオ";
+overflow-wrap: break-word;
+}
+
+hr{
+display: block;
+    border-width: 0px;
+	border-top: 1px dashed #FFFFF6;
+	margin-bottom: 1em;
+	margin-top:1em;
+
+}
+
+.top {
+width:100%
+}
+.sure {
+width:100%
+max-width: 480px; /* 最大幅 */
+min-width: 240px; /* 最小幅 */
+}
+
+.sure img{
+max-width: 50%; /* 最大幅 */
+height: auto;
+display: block;
+margin-bottom: 1em;
+margin-top:1em;
+}
+</style>
+<body>
+  <div class="top">
+	<form>
+		<textarea id="text-area"></textarea>
+	</form>
+      <p>
+        <button onclick="change()">変換</button>
+      </p>
+  </div>  
+<pre id="txt" class="sure"></pre>
+</body>
+
+<script>
+function change() {
+    let textArea = document.getElementById("text-area");
+    let text = textArea.value;
+    let replacedText = text.replace(/&gt;&gt;/g, ">>");
+    textArea.value = replacedText;
+    let lines = textArea.value.split('\n');
+    for (let line of lines) {
+        let match = line.match(/ID:([a-zA-Z0-9]{4})/);
+        if (match) {
+            let result = line.slice(match.index + match[0].length);
+            result = result.replace(/<br>/g, "\n");  // <br>タグを改行に変換
+            result = result.replace(/<[^>]*>/g, "");  // その他のHTMLタグを削除
+            result = result.replace(/(http|https):\/\/[^\s]*/g, "");  // URLを削除
+			result = result.replace(/>>\d{1,4}/g, "");  // ">>"とその後に続く1から4桁の数字を削除            
+			let outputElement = document.getElementById("txt");
+            outputElement.innerText += result + "\n";
+        }
+    }
+}
+</script>
+</html>
